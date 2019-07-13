@@ -32,17 +32,30 @@ func getHelp(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Twitter Proxy\n\n1. Gets tweets by screen_name\n/tweets/{screen_name}\n\n2. Gets top 10 tweets by screen_name\n/tweets/{screen_name}/top-10\n")
 }
 
-func getTweets(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	screenName := vars["screen_name"]
-
+func getTimeline(screenName string) []anaconda.Tweet {
 	v := url.Values{}
 	v.Set("screen_name", screenName)
 
 	timeline, _ := api.GetUserTimeline(v)
+	return timeline
+}
+
+func getTweets(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	screenName := vars["screen_name"]
+
+	timeline := getTimeline(screenName)
 
 	json.NewEncoder(w).Encode(timeline)
+}
 
+func getTop10Tweets(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	screenName := vars["screen_name"]
+
+	timeline := getTimeline(screenName)
+
+	json.NewEncoder(w).Encode(timeline)
 }
 
 func router() {
@@ -50,8 +63,8 @@ func router() {
 	myRouter.HandleFunc("/", getHelp)
 	myRouter.HandleFunc("/help", getHelp)
 	myRouter.HandleFunc("/tweets/{screen_name}", getTweets)
-	// myRouter.HandleFunc("/tweets/{screen_name}/top-10", getTop10Tweets)
-	log.Fatal(http.ListenAndServe(":5001", myRouter))
+	myRouter.HandleFunc("/tweets/{screen_name}/top-10", getTop10Tweets)
+	log.Fatal(http.ListenAndServe(":5000", myRouter))
 }
 
 func main() {
