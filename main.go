@@ -29,7 +29,7 @@ func initAPI() {
 }
 
 func getHelp(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Twitter Proxy (help)\n\n1. Gets tweets by screen_name\n/tweets/{screen_name}\n\n2. Gets top 10 tweets by screen_name\n/tweets/{screen_name}/top-10\n")
+	fmt.Fprintf(w, "Twitter Proxy\n\n1. Gets tweets by screen_name\n/tweets/{screen_name}\n\n2. Gets top 10 tweets by screen_name\n/tweets/{screen_name}/top-10\n")
 }
 
 func getTweets(w http.ResponseWriter, r *http.Request) {

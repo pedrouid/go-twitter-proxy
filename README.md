@@ -1,6 +1,6 @@
 # go-twitter-proxy
 
-Twitter Proxy (help)
+Twitter Proxy
 
 1. Gets tweets by screen_name
    /tweets/{screen_name}
