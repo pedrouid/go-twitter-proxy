@@ -22,6 +22,7 @@ go run main.go
    ```
 
 2. Get top 10 tweets by screen_name
+
    ```sh
    GET http://localhost:5000/tweets/{screen_name}/top-10
    ```

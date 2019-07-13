@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"sort"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/gorilla/mux"
@@ -29,12 +30,13 @@ func initAPI() {
 }
 
 func getHelp(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Twitter Proxy\n\n1. Gets tweets by screen_name\n/tweets/{screen_name}\n\n2. Gets top 10 tweets by screen_name\n/tweets/{screen_name}/top-10\n")
+	fmt.Fprintf(w, "Twitter Proxy\n\n1. Get tweets by screen_name\n/tweets/{screen_name}\n\n2. Get top 10 tweets by screen_name\n/tweets/{screen_name}/top-10\n")
 }
 
-func getTimeline(screenName string) []anaconda.Tweet {
+func getTimeline(screenName string, count string) []anaconda.Tweet {
 	v := url.Values{}
 	v.Set("screen_name", screenName)
+	v.Add("count", count)
 
 	timeline, _ := api.GetUserTimeline(v)
 	return timeline
@@ -44,7 +46,9 @@ func getTweets(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	screenName := vars["screen_name"]
 
-	timeline := getTimeline(screenName)
+	timeline := getTimeline(screenName, "200")
+
+	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(timeline)
 }
@@ -53,7 +57,15 @@ func getTop10Tweets(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	screenName := vars["screen_name"]
 
-	timeline := getTimeline(screenName)
+	timeline := getTimeline(screenName, "200")
+
+	sort.Slice(timeline, func(i, j int) bool {
+		return timeline[i].FavoriteCount > timeline[j].FavoriteCount
+	})
+
+	timeline = timeline[0:10]
+
+	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(timeline)
 }
