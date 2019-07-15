@@ -7,7 +7,7 @@ Twitter Proxy
 - github.com/ChimeraCoder/anaconda
 - github.com/gorilla/mux
 
-## Run
+## Run
 
 ```sh
 go run main.go
